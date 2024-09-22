@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onDestroy, onMount } from "svelte";
 	import LkMap from "./LKMap.svelte";
 
 	const SHEET_ID = "1413cnrpOKcnB_DQUZ41aiGxXVPDfCAbq2QPU5qiy11E";
@@ -86,42 +87,88 @@
 		}
 	> = new Map();
 
-	fetch(URL)
-		.then((response) => response.text())
-		.then((data) => {
-			const json = csvToJson(data);
+	let akdvotes = 0;
+	let sajivotes = 0;
+	let loading = true;
 
-			json.forEach((row) => {
-				const DIVISION_ID: string = row["Division ID"];
-				const CANDIDATE_NAME = row["Candidate Name"];
-				const VOTES = row.Votes;
+	const load = async () => {
+		loading = true;
+		
+		fetch(URL)
+			.then((response) => response.text())
+			.then((data) => {
+				const json = csvToJson(data);
 
-				if (!divisionVotes.has(DIVISION_ID)) {
-					divisionVotes.set(DIVISION_ID, {
-						winningColor: row.Color,
-						data: [],
+				json.forEach((row) => {
+					const DIVISION_ID: string = row["Division ID"];
+					const CANDIDATE_NAME = row["Candidate Name"];
+					const VOTES = row.Votes;
+
+					if (!divisionVotes.has(DIVISION_ID)) {
+						divisionVotes.set(DIVISION_ID, {
+							winningColor: row.Color,
+							data: [],
+						});
+					}
+
+					divisionVotes.get(DIVISION_ID)?.data.push({
+						party: CANDIDATE_NAME,
+						votes: VOTES,
 					});
-				}
-
-				divisionVotes.get(DIVISION_ID)?.data.push({
-					party: CANDIDATE_NAME,
-					votes: VOTES,
 				});
-			});
 
-			console.log(divisionVotes);
+				console.log(divisionVotes);
 
-			// for each division, update the map
-			divisionVotes.forEach((division, divisionId) => {
-				if (divisionId[0] !== "d") return;
+				// for each division, update the map
+				divisionVotes.forEach((division, divisionId) => {
+					if (divisionId[0] !== "d") return;
 
-				const selector = document.querySelector(`[data-id="${divisionId}"]`);
-				if (selector) {
-					selector.setAttribute("fill", division.winningColor);
-				}
-			});
-		})
-		.catch((error) => console.error("Error:", error));
+					const selector = document.querySelector(`[data-id="${divisionId}"]`);
+					if (selector) {
+						selector.setAttribute("fill", division.winningColor);
+
+						division.data.forEach((candidate) => {
+							if (candidate.party === "ANURA KUMARA DISSANAYAKE") {
+								akdvotes += candidate.votes;
+							} else if (candidate.party === "SAJITH PREMADASA") {
+								sajivotes += candidate.votes;
+							}
+						});
+					}
+				});
+
+				loading = false;
+			})
+			.catch((error) => console.error("Error:", error));
+	};
+
+	load();
+
+	let int: any = null;
+
+	onMount(() => {
+		int = setInterval(load, 10000);
+	});
+
+	onDestroy(() => {
+		clearInterval(int);
+	});
 </script>
+
+<h1>
+	{akdvotes > sajivotes ? "Not yet" : "We're cooked."}
+</h1>
+
+<p>
+	{akdvotes} votes for Anura Kumara Dissanayake
+</p>
+
+<p>
+	{sajivotes} votes for Sajith Premadasa
+</p>
+
+{#if loading}
+	<p>Loading...</p>
+{/if}
 
 <LkMap />
