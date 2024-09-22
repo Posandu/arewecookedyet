@@ -159,7 +159,27 @@
 </script>
 
 <h1>
-	{akdvotes > sajivotes ? "Not yet" : "We're cooked."}
+	{akdvotes > sajivotes
+		? "Not yet"
+		: sajivotes - akdvotes >= 1000000
+			? "We're cooked. Time to learn how to make kottu roti professionally."
+			: sajivotes - akdvotes >= 500000
+				? "We're cooked. Anyone know a good real estate agent in Antarctica?"
+				: sajivotes - akdvotes >= 250000
+					? "We're cooked. Is it too late to become a coconut picker?"
+					: sajivotes - akdvotes >= 100000
+						? "We're cooked. Maybe we can start a 'Disappointed Voters' support group?"
+						: sajivotes - akdvotes >= 50000
+							? "We're cooked. Time to practice our 'This is fine' meme face."
+							: sajivotes - akdvotes >= 25000
+								? "We're cooked. Anyone up for a spontaneous pilgrimage to Adam's Peak?"
+								: sajivotes - akdvotes >= 10000
+									? "We're cooked. Let's all agree to blame it on the Dhal curry, okay?"
+									: sajivotes - akdvotes >= 5000
+										? "We're cooked. Time to invest in a lifetime supply of Panadol."
+										: sajivotes - akdvotes >= 1000
+											? "We're cooked. Who's up for a consolation trip to Nuwara Eliya?"
+											: "We're cooked. But hey, at least we still have our sense of humor, right? ...Right?"}
 </h1>
 
 <p>
