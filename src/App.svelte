@@ -93,7 +93,7 @@
 
 	const load = async () => {
 		loading = true;
-		
+
 		fetch(URL)
 			.then((response) => response.text())
 			.then((data) => {
@@ -118,6 +118,9 @@
 				});
 
 				console.log(divisionVotes);
+
+				akdvotes = 0;
+				sajivotes = 0;
 
 				// for each division, update the map
 				divisionVotes.forEach((division, divisionId) => {
