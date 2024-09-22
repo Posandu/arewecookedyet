@@ -98,6 +98,10 @@
 			.then((response) => response.text())
 			.then((data) => {
 				const json = csvToJson(data);
+				
+				akdvotes = 0;
+				sajivotes = 0;
+				divisionVotes = new Map();
 
 				json.forEach((row) => {
 					const DIVISION_ID: string = row["Division ID"];
@@ -119,8 +123,6 @@
 
 				console.log(divisionVotes);
 
-				akdvotes = 0;
-				sajivotes = 0;
 
 				// for each division, update the map
 				divisionVotes.forEach((division, divisionId) => {
